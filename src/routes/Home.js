@@ -1,6 +1,5 @@
 import React from "react";
-import { gql } from "@apollo/client";
-import { useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import styled from "styled-components";
 import Movie from "../components/Movie";
 
@@ -9,8 +8,18 @@ const GET_MOVIES = gql`
     movies {
       id
       medium_cover_image
+      isLiked @client
     }
   }
+`;
+
+const Movies = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 25px;
+  width: 60%;
+  position: relative;
+  top: -50px;
 `;
 
 const Container = styled.div`
@@ -57,9 +66,18 @@ export default () => {
         <Subtitle>I love GraphQL</Subtitle>
       </Header>
       {loading && <Loading>Loading...</Loading>}
-      {!loading &&
-        data.movies &&
-        data.movies.map((m) => <Movie key={m.id} id={m.id} />)}
+      {!loading && data.movies && (
+        <Movies>
+          {data.movies.map((m) => (
+            <Movie
+              key={m.id}
+              id={m.id}
+              isLiked={m.isLiked}
+              bg={m.medium_cover_image}
+            />
+          ))}
+        </Movies>
+      )}
     </Container>
   );
 };
